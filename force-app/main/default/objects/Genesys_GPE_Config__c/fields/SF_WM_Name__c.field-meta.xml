@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SF_WM_Name__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>Get from Embedded Service Deployment, Chat Code Snippet, second value on embeddedservice_bootstrap.init(</inlineHelpText>
+    <label>SF WM Name</label>
+    <length>255</length>
+    <required>true</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>
