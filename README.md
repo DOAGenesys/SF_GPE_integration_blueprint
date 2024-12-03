@@ -97,12 +97,6 @@ git clone git@github.com:DOAGenesys/SF_GPE_integration_blueprint.git
 cd SF_GPE_integration_blueprint
 ```
 
-Option 3: Download ZIP
-- Navigate to https://github.com/DOAGenesys/SF_GPE_integration_blueprint
-- Click the "Code" button
-- Select "Download ZIP"
-- Extract the ZIP file to your local machine
-
 ### 3. Authentication
 
 Log in to your Salesforce org:
