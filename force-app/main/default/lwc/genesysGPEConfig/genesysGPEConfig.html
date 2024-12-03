@@ -1,0 +1,824 @@
+<template>
+    <lightning-card title="Genesys Predictive Engagement Configuration" icon-name="custom:custom20">
+        <div class="slds-p-around_medium">
+            <template if:true={showInitialChoice}>
+                <lightning-radio-group
+                    name="configAction"
+                    label="Choose an action"
+                    options={configActionOptions}
+                    value={selectedConfigAction}
+                    onchange={handleConfigActionChange}
+                    type="radio"
+                ></lightning-radio-group>
+            </template>
+
+						<!-- Dropdown for selecting existing config -->
+						<template if:true={showExistingConfigDropdown}>
+								<lightning-combobox
+										label="Select Existing Configuration"
+										value={selectedExistingConfig}
+										options={existingConfigOptions}
+										onchange={handleExistingConfigChange}
+										class="slds-m-bottom_small"
+								></lightning-combobox>
+								<template if:true={noConfigurationsFound}>
+										<p>No existing configurations found.</p>
+								</template>
+						</template>
+
+            <!-- Button to return to starting point -->
+            <template if:false={showInitialChoice}>
+                <lightning-button 
+                    label="Return to Start" 
+                    onclick={returnToStart} 
+                    variant="neutral"
+                    class="slds-m-bottom_small"
+                ></lightning-button>
+            </template>
+
+            <!-- Main configuration form -->
+            <template if:true={showConfigForm}>
+                <lightning-input 
+                    label="Configuration Name" 
+                    type="text"
+                    value={configName}
+                    onchange={handleConfigNameChange}
+                    class="slds-m-bottom_small"
+                    required
+                ></lightning-input>
+
+                <lightning-accordion allow-multiple-sections-open>
+                    <!-- General Settings Section -->
+                    <lightning-accordion-section name="general" label="GC Settings">
+                        <div class="slds-grid slds-gutters">
+                            <div class="slds-col">
+                                <lightning-combobox
+                                    label="GC Domain"
+                                    value={gcDomain}
+                                    options={gcDomainOptions}
+                                    onchange={handleGCDomainChange}
+                                    required
+                                ></lightning-combobox>
+                            </div>
+                            <div class="slds-col">
+																<lightning-combobox
+																		label="GC Environment"
+																		value={gcEnvironment}
+																		options={gcEnvironmentOptions}
+																		onchange={handleGCEnvironmentChange}
+																		disabled={gcEnvironmentDisabled}
+																		required
+																></lightning-combobox>
+                            </div>
+                            <div class="slds-col">
+                                <lightning-input 
+                                    label="GC Messaging Deployment ID" 
+                                    type="text"
+                                    value={gcMessagingDeplId}
+                                    onchange={handleInputChange}
+                                    data-field="gcMessagingDeplId"
+                                    required
+                                ></lightning-input>
+                            </div>
+                        </div>
+                    </lightning-accordion-section>
+										
+										<!-- SF Settings Section -->
+										<lightning-accordion-section name="sfSettings" label="SF Settings">
+												<div class="slds-form-element">
+														<label class="slds-form-element__label">
+																SF Settings
+																<lightning-helptext 
+																		content="Get values from Embedded Service Deployment, Chat Code Snippet, first three values within 'embeddedservice_bootstrap.init('"
+																		class="slds-m-left_xx-small"
+																></lightning-helptext>
+														</label>
+												</div>
+												<div class="slds-grid slds-gutters">
+														<div class="slds-col">
+																<lightning-input 
+																		label="SF WM URL" 
+																		type="text"
+																		value={sfWmUrl}
+																		onchange={handleInputChange}
+																		data-field="sfWmUrl"
+																		required
+																></lightning-input>
+														</div>
+														<div class="slds-col">
+																<lightning-input 
+																		label="SF Org ID" 
+																		type="text"
+																		value={sfOrgId}
+																		onchange={handleInputChange}
+																		data-field="sfOrgId"
+																		required
+																></lightning-input>
+														</div>
+														<div class="slds-col">
+																<lightning-input 
+																		label="SF WM Name" 
+																		type="text"
+																		value={sfWmName}
+																		onchange={handleInputChange}
+																		data-field="sfWmName"
+																		required
+																></lightning-input>
+														</div>
+												</div>
+										</lightning-accordion-section>								
+
+                    <!-- Pageview Tracking Section -->
+										<lightning-accordion-section name="pageview" label="Pageview Tracking">
+												<lightning-input 
+														type="checkbox" 
+														label="Enable Pageview Tracking" 
+														checked={pageviewConfig.enabled}
+														onchange={handlePageviewChange}
+														data-field="enabled"
+												></lightning-input>
+												<template if:true={pageviewConfig.enabled}>
+														<lightning-input 
+																type="checkbox" 
+																label="Capture All" 
+																checked={pageviewConfig.captureAll}
+																onchange={handlePageviewChange}
+																data-field="captureAll"
+																class="slds-m-left_small"
+														></lightning-input>
+														<template if:false={pageviewConfig.captureAll}>
+																<lightning-input 
+																		label="Page Title" 
+																		type="text"
+																		value={pageviewConfig.pageTitle}
+																		onchange={handlePageviewChange}
+																		data-field="pageTitle"
+																></lightning-input>
+																<lightning-input 
+																		label="Page Location" 
+																		type="text"
+																		value={pageviewConfig.pageLocation}
+																		onchange={handlePageviewChange}
+																		data-field="pageLocation"
+																></lightning-input>
+														</template>
+														<lightning-button 
+																label="Add Custom Attribute" 
+																onclick={addPageviewCustomAttribute} 
+																class="slds-m-top_small"
+														></lightning-button>
+														<template for:each={pageviewConfig.customAttributes} for:item="attr" for:index="index">
+																<div key={attr.id} class="slds-grid slds-gutters slds-m-top_x-small">
+																		<div class="slds-col slds-size_1-of-4">
+																				<lightning-input 
+																						label="Attribute Name"
+																						value={attr.name}
+																						onchange={handlePageviewCustomAttributeChange}
+																						data-index={index}
+																						data-field="name"
+																				></lightning-input>
+																		</div>
+																		<div class="slds-col slds-size_1-of-4">
+																				<lightning-input 
+																						label="Attribute Value"
+																						value={attr.value}
+																						onchange={handlePageviewCustomAttributeChange}
+																						data-index={index}
+																						data-field="value"
+																				></lightning-input>
+																		</div>
+																		<div class="slds-col slds-size_1-of-4">
+																				<lightning-input 
+																						label="Trait Name"
+																						value={attr.traitName}
+																						onchange={handlePageviewCustomAttributeChange}
+																						data-index={index}
+																						data-field="traitName"
+																				></lightning-input>
+																		</div>
+																		<div class="slds-col slds-size_1-of-4">
+																				<lightning-button-icon
+																						icon-name="utility:delete"
+																						alternative-text="Remove Attribute"
+																						title="Remove Attribute"
+																						onclick={removePageviewCustomAttribute}
+																						data-index={index}
+																						class="slds-m-top_large"
+																				></lightning-button-icon>
+																		</div>
+																</div>
+														</template>
+												</template>
+										</lightning-accordion-section>
+
+										<!-- Forms Tracking Section -->
+										<lightning-accordion-section name="forms" label="Form Tracking">
+												<lightning-input 
+														type="checkbox" 
+														label="Enable Form Tracking" 
+														checked={formsTrackConfig.enabled}
+														onchange={handleFormsTrackChange}
+														data-field="enabled"
+												></lightning-input>
+												<template if:true={formsTrackConfig.enabled}>
+														<lightning-input 
+																type="checkbox" 
+																label="Capture All" 
+																checked={formsTrackConfig.captureAll}
+																onchange={handleFormsTrackChange}
+																data-field="captureAll"
+																class="slds-m-left_small"
+														></lightning-input>
+														<template if:false={formsTrackConfig.captureAll}>
+																<div class="slds-grid slds-gutters">
+																		<div class="slds-col slds-size_11-of-12">
+																				<lightning-input 
+																						label="Form Selector" 
+																						type="text"
+																						value={formsTrackConfig.selector}
+																						onchange={handleFormsTrackChange}
+																						data-field="selector"
+																				></lightning-input>
+																		</div>
+																		<div class="slds-col slds-size_1-of-12 slds-align-bottom">
+																				<lightning-helptext 
+																						content={selectorHelpText}
+																						class="slds-m-left_xx-small"
+																				></lightning-helptext>
+																		</div>
+																</div>
+																<lightning-input 
+																		label="Form Name" 
+																		type="text"
+																		value={formsTrackConfig.formName}
+																		onchange={handleFormsTrackChange}
+																		data-field="formName"
+																></lightning-input>
+														</template>
+														<lightning-input 
+																type="checkbox" 
+																label="Capture Form Data on Abandon" 
+																checked={formsTrackConfig.captureFormDataOnAbandon}
+																onchange={handleFormsTrackChange}
+																data-field="captureFormDataOnAbandon"
+														></lightning-input>
+														<lightning-input 
+																type="checkbox" 
+																label="Capture Form Data on Submit" 
+																checked={formsTrackConfig.captureFormDataOnSubmit}
+																onchange={handleFormsTrackChange}
+																data-field="captureFormDataOnSubmit"
+														></lightning-input>
+														<lightning-button 
+																label="Add Custom Attribute" 
+																onclick={addFormsCustomAttribute} 
+																class="slds-m-top_small"
+														></lightning-button>
+														<template for:each={formsTrackConfig.customAttributes} for:item="attr" for:index="index">
+																<div key={attr.id} class="slds-grid slds-gutters slds-m-top_x-small">
+																		<div class="slds-col slds-size_1-of-4">
+																				<lightning-input 
+																						label="Attribute Name"
+																						value={attr.name}
+																						onchange={handleFormsCustomAttributeChange}
+																						data-index={index}
+																						data-field="name"
+																				></lightning-input>
+																		</div>
+																		<div class="slds-col slds-size_1-of-4">
+																				<lightning-input 
+																						label="Attribute Value"
+																						value={attr.value}
+																						onchange={handleFormsCustomAttributeChange}
+																						data-index={index}
+																						data-field="value"
+																				></lightning-input>
+																		</div>
+																		<div class="slds-col slds-size_1-of-4">
+																				<lightning-input 
+																						label="Trait Name"
+																						value={attr.traitName}
+																						onchange={handleFormsCustomAttributeChange}
+																						data-index={index}
+																						data-field="traitName"
+																				></lightning-input>
+																		</div>
+																		<div class="slds-col slds-size_1-of-4">
+																				<lightning-button-icon
+																						icon-name="utility:delete"
+																						alternative-text="Remove Attribute"
+																						title="Remove Attribute"
+																						onclick={removeFormsCustomAttribute}
+																						data-index={index}
+																						class="slds-m-top_large"
+																				></lightning-button-icon>
+																		</div>
+																</div>
+														</template>
+												</template>
+										</lightning-accordion-section>
+
+										<!-- Click Event Tracking Section -->
+										<lightning-accordion-section name="clickEvents" label="Click Event Tracking">
+												<lightning-input 
+														type="checkbox" 
+														label="Enable Click Event Tracking" 
+														checked={clickEventsConfig.enabled}
+														onchange={handleClickEventsChange}
+														data-field="enabled"
+												></lightning-input>
+												<template if:true={clickEventsConfig.enabled}>
+														<lightning-button 
+																label="Add Click Event" 
+																onclick={addClickEvent} 
+																class="slds-m-top_small"
+														></lightning-button>
+														<template for:each={clickEventsConfig.clickEvents} for:item="event" for:index="index">
+																<div key={event.id} class="slds-box slds-m-top_small">
+																		<div class="slds-form-element">
+																				<label class="slds-form-element__label" for={event.id}>
+																						Selector
+																						<lightning-helptext 
+																								content={selectorHelpText}
+																								class="slds-m-left_xx-small"
+																						></lightning-helptext>
+																				</label>
+																				<div class="slds-form-element__control">
+																						<lightning-input 
+																								id={event.id}
+																								value={event.selector}
+																								onchange={handleClickEventChange}
+																								data-index={index}
+																								data-field="selector"
+																						></lightning-input>
+																				</div>
+																		</div>
+																		<div class="slds-grid slds-gutters">
+																				<div class="slds-col slds-size_1-of-3">
+																						<lightning-input 
+																								label="Event Name Prefix"
+																								value="click_"
+																								disabled
+																								variant="label-stacked"
+																						></lightning-input>
+																				</div>
+																				<div class="slds-col slds-size_2-of-3">
+																						<lightning-input 
+																								label="Event Name Suffix"
+																								value={event.eventNameSuffix}
+																								onchange={handleClickEventChange}
+																								data-index={index}
+																								data-field="eventNameSuffix"
+																								variant="label-stacked"
+																								required
+																						></lightning-input>
+																				</div>
+																		</div>
+																		<lightning-button 
+																				label="Add Custom Attribute" 
+																				onclick={addClickEventCustomAttribute} 
+																				data-index={index}
+																				class="slds-m-top_small"
+																		></lightning-button>
+																		<template for:each={event.customAttributes} for:item="attr" for:index="attrIndex">
+																				<div key={attr.id} class="slds-grid slds-gutters slds-m-top_x-small">
+																						<div class="slds-col slds-size_1-of-4">
+																								<lightning-input 
+																										label="Attribute Name"
+																										value={attr.name}
+																										onchange={handleClickEventCustomAttributeChange}
+																										data-event-index={index}
+																										data-attr-index={attrIndex}
+																										data-field="name"
+																								></lightning-input>
+																						</div>
+																						<div class="slds-col slds-size_1-of-4">
+																								<lightning-input 
+																										label="Attribute Value"
+																										value={attr.value}
+																										onchange={handleClickEventCustomAttributeChange}
+																										data-event-index={index}
+																										data-attr-index={attrIndex}
+																										data-field="value"
+																								></lightning-input>
+																						</div>
+																						<div class="slds-col slds-size_1-of-4">
+																								<lightning-input 
+																										label="Trait Name"
+																										value={attr.traitName}
+																										onchange={handleClickEventCustomAttributeChange}
+																										data-event-index={index}
+																										data-attr-index={attrIndex}
+																										data-field="traitName"
+																								></lightning-input>
+																						</div>
+																						<div class="slds-col slds-size_1-of-4">
+																								<lightning-button-icon
+																										icon-name="utility:delete"
+																										alternative-text="Remove Attribute"
+																										title="Remove Attribute"
+																										onclick={removeClickEventCustomAttribute}
+																										data-event-index={index}
+																										data-attr-index={attrIndex}
+																										class="slds-m-top_large"
+																								></lightning-button-icon>
+																						</div>
+																				</div>
+																		</template>
+																		<lightning-button 
+																				label="Remove Click Event" 
+																				onclick={removeClickEvent} 
+																				data-index={index} 
+																				variant="destructive" 
+																				class="slds-m-top_small"
+																		></lightning-button>
+																</div>
+														</template>
+												</template>
+										</lightning-accordion-section>
+
+										<!-- In Viewport Tracking Section -->
+										<lightning-accordion-section name="inViewport" label="In Viewport Tracking">
+												<lightning-input 
+														type="checkbox" 
+														label="Enable In Viewport Tracking" 
+														checked={inViewportConfig.enabled}
+														onchange={handleInViewportChange}
+														data-field="enabled"
+												></lightning-input>
+												<template if:true={inViewportConfig.enabled}>
+														<lightning-button 
+																label="Add In Viewport Event" 
+																onclick={addInViewportEvent} 
+																class="slds-m-top_small"
+														></lightning-button>
+														<template for:each={inViewportConfig.inViewportEvents} for:item="event" for:index="index">
+																<div key={event.id} class="slds-box slds-m-top_small">
+																		<div class="slds-grid slds-gutters">
+																				<div class="slds-col slds-size_11-of-12">
+																						<lightning-input 
+																								label="Selector"
+																								value={event.selector}
+																								onchange={handleInViewportEventChange}
+																								data-index={index}
+																								data-field="selector"
+																						></lightning-input>
+																				</div>
+																				<div class="slds-col slds-size_1-of-12 slds-align-bottom">
+																						<lightning-helptext 
+																								content={selectorHelpText}
+																								class="slds-m-left_xx-small"
+																						></lightning-helptext>
+																				</div>
+																		</div>
+																		<div class="slds-grid slds-gutters">
+																				<div class="slds-col slds-size_1-of-3">
+																						<lightning-input 
+																								label="Event Name Prefix"
+																								value="viewport_"
+																								disabled
+																								variant="label-stacked"
+																						></lightning-input>
+																				</div>
+																				<div class="slds-col slds-size_2-of-3">
+																						<lightning-input 
+																								label="Event Name Suffix"
+																								value={event.eventNameSuffix}
+																								onchange={handleInViewportEventChange}
+																								data-index={index}
+																								data-field="eventNameSuffix"
+																								variant="label-stacked"
+																								required
+																						></lightning-input>
+																				</div>
+																		</div>
+																		<lightning-button 
+																				label="Add Custom Attribute" 
+																				onclick={addInViewportEventCustomAttribute} 
+																				data-index={index}
+																				class="slds-m-top_small"
+																		></lightning-button>
+																		<template for:each={event.customAttributes} for:item="attr" for:index="attrIndex">
+																				<div key={attr.id} class="slds-grid slds-gutters slds-m-top_x-small">
+																						<div class="slds-col slds-size_1-of-4">
+																								<lightning-input 
+																										label="Attribute Name"
+																										value={attr.name}
+																										onchange={handleInViewportEventCustomAttributeChange}
+																										data-event-index={index}
+																										data-attr-index={attrIndex}
+																										data-field="name"
+																								></lightning-input>
+																						</div>
+																						<div class="slds-col slds-size_1-of-4">
+																								<lightning-input 
+																										label="Attribute Value"
+																										value={attr.value}
+																										onchange={handleInViewportEventCustomAttributeChange}
+																										data-event-index={index}
+																										data-attr-index={attrIndex}
+																										data-field="value"
+																								></lightning-input>
+																						</div>
+																						<div class="slds-col slds-size_1-of-4">
+																								<lightning-input 
+																										label="Trait Name"
+																										value={attr.traitName}
+																										onchange={handleInViewportEventCustomAttributeChange}
+																										data-event-index={index}
+																										data-attr-index={attrIndex}
+																										data-field="traitName"
+																								></lightning-input>
+																						</div>
+																						<div class="slds-col slds-size_1-of-4">
+																								<lightning-button-icon
+																										icon-name="utility:delete"
+																										alternative-text="Remove Attribute"
+																										title="Remove Attribute"
+																										onclick={removeInViewportEventCustomAttribute}
+																										data-event-index={index}
+																										data-attr-index={attrIndex}
+																										class="slds-m-top_large"
+																								></lightning-button-icon>
+																						</div>
+																				</div>
+																		</template>
+																		<lightning-button 
+																				label="Remove In Viewport Event" 
+																				onclick={removeInViewportEvent} 
+																				data-index={index} 
+																				variant="destructive" 
+																				class="slds-m-top_small"
+																		></lightning-button>
+																</div>
+														</template>
+												</template>
+										</lightning-accordion-section>
+
+										<!-- Idle Event Tracking Section -->
+										<lightning-accordion-section name="idleEvents" label="Idle Event Tracking">
+												<lightning-input 
+														type="checkbox" 
+														label="Enable Idle Event Tracking" 
+														checked={idleEventsConfig.enabled}
+														onchange={handleIdleEventsChange}
+														data-field="enabled"
+												></lightning-input>
+												<template if:true={idleEventsConfig.enabled}>
+														<lightning-button 
+																label="Add Idle Event" 
+																onclick={addIdleEvent} 
+																class="slds-m-top_small"
+														></lightning-button>
+														<template for:each={idleEventsConfig.idleEvents} for:item="event" for:index="index">
+																<div key={event.id} class="slds-box slds-m-top_small">
+																		<lightning-input 
+																				label="Idle After (seconds)"
+																				type="number"
+																				min="30"
+																				value={event.idleAfterSeconds}
+																				onchange={handleIdleEventChange}
+																				data-index={index}
+																				data-field="idleAfterSeconds"
+																		></lightning-input>
+																		<div class="slds-grid slds-gutters">
+																				<div class="slds-col slds-size_1-of-3">
+																						<lightning-input 
+																								label="Event Name Prefix"
+																								value="idle_"
+																								disabled
+																								variant="label-stacked"
+																						></lightning-input>
+																				</div>
+																				<div class="slds-col slds-size_2-of-3">
+																						<lightning-input 
+																								label="Event Name Suffix"
+																								value={event.eventNameSuffix}
+																								onchange={handleIdleEventChange}
+																								data-index={index}
+																								data-field="eventNameSuffix"
+																								variant="label-stacked"
+																								required
+																						></lightning-input>
+																				</div>
+																		</div>
+																		<lightning-button 
+																				label="Add Custom Attribute" 
+																				onclick={addIdleEventCustomAttribute} 
+																				data-index={index}
+																				class="slds-m-top_small"
+																		></lightning-button>
+																		<template for:each={event.customAttributes} for:item="attr" for:index="attrIndex">
+																				<div key={attr.id} class="slds-grid slds-gutters slds-m-top_x-small">
+																						<div class="slds-col slds-size_1-of-4">
+																								<lightning-input 
+																										label="Attribute Name"
+																										value={attr.name}
+																										onchange={handleIdleEventCustomAttributeChange}
+																										data-event-index={index}
+																										data-attr-index={attrIndex}
+																										data-field="name"
+																								></lightning-input>
+																						</div>
+																						<div class="slds-col slds-size_1-of-4">
+																								<lightning-input 
+																										label="Attribute Value"
+																										value={attr.value}
+																										onchange={handleIdleEventCustomAttributeChange}
+																										data-event-index={index}
+																										data-attr-index={attrIndex}
+																										data-field="value"
+																								></lightning-input>
+																						</div>
+																						<div class="slds-col slds-size_1-of-4">
+																								<lightning-input 
+																										label="Trait Name"
+																										value={attr.traitName}
+																										onchange={handleIdleEventCustomAttributeChange}
+																										data-event-index={index}
+																										data-attr-index={attrIndex}
+																										data-field="traitName"
+																								></lightning-input>
+																						</div>
+																						<div class="slds-col slds-size_1-of-4">
+																								<lightning-button-icon
+																										icon-name="utility:delete"
+																										alternative-text="Remove Attribute"
+																										title="Remove Attribute"
+																										onclick={removeIdleEventCustomAttribute}
+																										data-event-index={index}
+																										data-attr-index={attrIndex}
+																										class="slds-m-top_large"
+																								></lightning-button-icon>
+																						</div>
+																				</div>
+																		</template>
+																		<lightning-button 
+																				label="Remove Idle Event" 
+																				onclick={removeIdleEvent} 
+																				data-index={index} 
+																				variant="destructive" 
+																				class="slds-m-top_small"
+																		></lightning-button>
+																</div>
+														</template>
+												</template>
+										</lightning-accordion-section>
+
+										<!-- Scroll Depth Tracking Section -->
+										<lightning-accordion-section name="scrollDepth" label="Scroll Depth Tracking">
+												<lightning-input 
+														type="checkbox" 
+														label="Enable Scroll Depth Tracking" 
+														checked={scrollDepthConfig.enabled}
+														onchange={handleScrollDepthChange}
+														data-field="enabled"
+												></lightning-input>
+												<template if:true={scrollDepthConfig.enabled}>
+														<lightning-button 
+																label="Add Scroll Depth Event" 
+																onclick={addScrollDepthEvent} 
+																class="slds-m-top_small"
+														></lightning-button>
+														<template for:each={scrollDepthConfig.scrollDepthEvents} for:item="event" for:index="index">
+																<div key={event.id} class="slds-box slds-m-top_small">
+																		<lightning-input 
+																				label="Percentage"
+																				type="number"
+																				min="1"
+																				max="100"
+																				value={event.percentage}
+																				onchange={handleScrollDepthEventChange}
+																				data-index={index}
+																				data-field="percentage"
+																		></lightning-input>
+																		<div class="slds-grid slds-gutters">
+																				<div class="slds-col slds-size_1-of-3">
+																						<lightning-input 
+																								label="Event Name Prefix"
+																								value="scroll_"
+																								disabled
+																								variant="label-stacked"
+																						></lightning-input>
+																				</div>
+																				<div class="slds-col slds-size_2-of-3">
+																						<lightning-input 
+																								label="Event Name Suffix"
+																								value={event.eventNameSuffix}
+																								onchange={handleScrollDepthEventChange}
+																								data-index={index}
+																								data-field="eventNameSuffix"
+																								variant="label-stacked"
+																								required
+																						></lightning-input>
+																				</div>
+																		</div>
+																		<lightning-button 
+																				label="Add Custom Attribute" 
+																				onclick={addScrollDepthEventCustomAttribute} 
+																				data-index={index}
+																				class="slds-m-top_small"
+																		></lightning-button>
+																		<template for:each={event.customAttributes} for:item="attr" for:index="attrIndex">
+																				<div key={attr.id} class="slds-grid slds-gutters slds-m-top_x-small">
+																						<div class="slds-col slds-size_1-of-4">
+																								<lightning-input 
+																										label="Attribute Name"
+																										value={attr.name}
+																										onchange={handleScrollDepthEventCustomAttributeChange}
+																										data-event-index={index}
+																										data-attr-index={attrIndex}
+																										data-field="name"
+																								></lightning-input>
+																						</div>
+																						<div class="slds-col slds-size_1-of-4">
+																								<lightning-input 
+																										label="Attribute Value"
+																										value={attr.value}
+																										onchange={handleScrollDepthEventCustomAttributeChange}
+																										data-event-index={index}
+																										data-attr-index={attrIndex}
+																										data-field="value"
+																								></lightning-input>
+																						</div>
+																						<div class="slds-col slds-size_1-of-4">
+																								<lightning-input 
+																										label="Trait Name"
+																										value={attr.traitName}
+																										onchange={handleScrollDepthEventCustomAttributeChange}
+																										data-event-index={index}
+																										data-attr-index={attrIndex}
+																										data-field="traitName"
+																								></lightning-input>
+																						</div>
+																						<div class="slds-col slds-size_1-of-4">
+																								<lightning-button-icon
+																										icon-name="utility:delete"
+																										alternative-text="Remove Attribute"
+																										title="Remove Attribute"
+																										onclick={removeScrollDepthEventCustomAttribute}
+																										data-event-index={index}
+																										data-attr-index={attrIndex}
+																										class="slds-m-top_large"
+																								></lightning-button-icon>
+																						</div>
+																				</div>
+																		</template>
+																		<lightning-button 
+																				label="Remove Scroll Depth Event" 
+																				onclick={removeScrollDepthEvent} 
+																				data-index={index} 
+																				variant="destructive" 
+																				class="slds-m-top_small"
+																		></lightning-button>
+																</div>
+														</template>
+												</template>
+										</lightning-accordion-section>
+										
+										<!-- Open Action Section -->
+										<template if:false={isEditMode}>
+												<lightning-accordion-section name="openAction" label="Open Action">
+														<div class="slds-form-element">
+																<label class="slds-form-element__label" for="open-action-name">
+																		<abbr class="slds-required" title="required">*</abbr>
+																		Open Action Name
+																		<lightning-helptext 
+																				content="This name can be the same as the Configuration Name, or a new one. This name will be displayed on the GC Admin UI."
+																				class="slds-m-left_xx-small"
+																		></lightning-helptext>
+																</label>
+																<div class="slds-form-element__control">
+																		<lightning-input 
+																				id="open-action-name"
+																				name="openActionName"
+																				type="text"
+																				value={openActionName}
+																				onchange={handleOpenActionNameChange}
+																				required
+																				variant="label-hidden"
+																		></lightning-input>
+																</div>
+														</div>
+												</lightning-accordion-section>
+										</template>						
+								</lightning-accordion>
+
+								<div class="slds-m-top_medium slds-grid slds-grid_align-spread">
+										<lightning-button 
+												label={saveButtonLabel}
+												onclick={saveConfiguration} 
+												variant="brand"
+										></lightning-button>
+										<template if:true={isEditMode}>
+												<lightning-button 
+														label="Delete Configuration"
+														onclick={deleteConfiguration} 
+														variant="destructive"
+												></lightning-button>
+										</template>
+								</div>
+						</template>
+        </div>
+    </lightning-card>
+</template>
