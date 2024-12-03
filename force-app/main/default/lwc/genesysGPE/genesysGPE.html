@@ -1,0 +1,64 @@
+<template>
+   <div class="slds-card slds-p-around_medium" if={showForm}>
+       <div class="slds-grid slds-gutters slds-wrap">
+           <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+               <div class="slds-form-element">
+                   <label class="slds-form-element__label" for="email">
+                       <abbr class="slds-required" title="required">*</abbr> Email
+                   </label>
+                   <div class="slds-form-element__control">
+                       <div class="slds-input-has-icon slds-input-has-icon_right">
+                           <input type="email" 
+                                  id="email" 
+                                  class="slds-input" 
+                                  value={email} 
+                                  onchange={handleEmailChange}
+                                  placeholder="user@example.com"
+                                  required />
+                           <lightning-icon 
+                               icon-name={emailValidationIcon} 
+                               size="x-small" 
+                               class={emailIconClass}
+                               alternative-text={emailValidationText}>
+                           </lightning-icon>
+                       </div>
+                   </div>
+               </div>
+           </div>
+           
+           <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+               <div class="slds-form-element">
+                   <label class="slds-form-element__label" for="phone">
+                       <abbr class="slds-required" title="required">*</abbr> Phone
+                   </label>
+                   <div class="slds-form-element__control">
+                       <div class="slds-input-has-icon slds-input-has-icon_right">
+                           <input type="tel" 
+                                  id="phone" 
+                                  class="slds-input" 
+                                  value={phone} 
+                                  placeholder="e.164 format, example: +34666111222"
+                                  onchange={handlePhoneChange}
+                                  pattern="^\+[1-9]\d{1,14}$"
+                                  required />
+                           <lightning-icon 
+                               icon-name={phoneValidationIcon} 
+                               size="x-small" 
+                               class={phoneIconClass}
+                               alternative-text={phoneValidationText}>
+                           </lightning-icon>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </div>
+       
+       <div class="slds-m-top_medium slds-text-align_center">
+           <button class="slds-button slds-button_brand" 
+                   onclick={handleSubmit}
+                   disabled={isSubmitDisabled}>
+               Submit
+           </button>
+       </div>
+   </div>
+</template>
