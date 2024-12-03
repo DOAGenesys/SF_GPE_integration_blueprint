@@ -1,29 +1,57 @@
-# Salesforce Genesys Integration Project
+# Salesforce GPE Integration
 
 ## Overview
 
-This project implements a comprehensive integration between Salesforce and Genesys Cloud, enabling advanced customer journey tracking, predictive engagement, and web messaging capabilities. The integration includes configuration management, event tracking, and real-time customer journey visualization.
+This project implements a strategic integration between Salesforce and Genesys Predictive Engagement (GPE), bringing together two powerful platforms:
+- **Salesforce** serves as the system of record and messaging platform
+- **Genesys Cloud** adds proactive and AI-powered predictive engagement capabilities 
+
+The integration enables:
+- Monitoring and tracking of web events on Salesforce digital experience sites
+- Intelligent triggering of Salesforce messaging based on configurable conditions
+- Real-time visibility of customer web journey events for messaging agents
+- Advanced customer journey tracking and predictive engagement
+- Comprehensive configuration management and event tracking
+
+Key goals of this integration:
+- Enhance Salesforce messaging with Genesys Cloud's unique predictive engagement capabilities
+- Make GPE data readily available in Salesforce for improved user experience and reporting purposes
 
 ## Features
 
-- **Genesys Configuration Management**: Create and manage Genesys Predictive Engagement configurations
-- **Event Tracking**: Track various customer interactions including:
+- **Genesys Configuration Management**: 
+  - Create and manage Genesys Predictive Engagement configurations
+  - Admin-friendly Lightning Web Component for condition configuration
+  - Customizable triggers for Salesforce messaging initiation
+
+- **Event Tracking**: Comprehensive monitoring of customer interactions including:
   - Pageview tracking
   - Form submission tracking
   - Click event tracking
   - Idle event tracking
   - Viewport tracking
   - Scroll depth tracking
-- **Customer Journey Visualization**: Real-time visualization of customer interactions and journey
-- **Web Messaging Integration**: Seamless integration with Salesforce Web Messaging
-- **Automated Event Processing**: Background processing of customer events and session data
+
+- **Customer Journey Visualization**: 
+  - Real-time visualization of customer interactions and journey
+  - Custom Lightning Web Component for agents to view complete web customer journey
+  - Timeline view of all events during customer sessions
+
+- **Web Messaging Integration**: 
+  - Seamless integration with Salesforce Web Messaging
+  - Intelligent trigger conditions based on customer behavior
+  - Real-time agent access to customer journey data
+
+- **Automated Event Processing**: 
+  - Background processing of customer events and session data
+  - Real-time event capture and processing
+  - Automatic data synchronization between platforms
 
 ## Prerequisites
 
 - Salesforce CLI installed
-- Salesforce Dev Hub enabled organization
+- Salesforce organization with Service Cloud and MIAW licenses
 - Genesys Cloud organization with API access
-- Appropriate permissions and licenses for both Salesforce and Genesys Cloud
 
 ## Project Structure
 
@@ -53,9 +81,29 @@ force-app/
 ### 1. Prerequisites
 
 - Install Salesforce CLI from: https://developer.salesforce.com/tools/salesforcecli
-- Ensure you have appropriate permissions in both Salesforce and Genesys Cloud organizations
+- Configure Salesforce CLI: https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm
 
-### 2. Authentication
+### 2. Clone the Repository
+
+Option 1: Using HTTPS
+```bash
+git clone https://github.com/DOAGenesys/SF_GPE_integration_blueprint.git
+cd SF_GPE_integration_blueprint
+```
+
+Option 2: Using SSH (if configured)
+```bash
+git clone git@github.com:DOAGenesys/SF_GPE_integration_blueprint.git
+cd SF_GPE_integration_blueprint
+```
+
+Option 3: Download ZIP
+- Navigate to https://github.com/DOAGenesys/SF_GPE_integration_blueprint
+- Click the "Code" button
+- Select "Download ZIP"
+- Extract the ZIP file to your local machine
+
+### 3. Authentication
 
 Log in to your Salesforce org:
 
@@ -63,9 +111,9 @@ Log in to your Salesforce org:
 sfdx org login web
 ```
 
-### 2. Deployment
+### 4. Deployment
 
-Once you are logged in, deploy the components to your org (change your username properly at the end of the command below):
+Once you are logged in and have the code locally, deploy the components to your org (change your username properly at the end of the command below):
 
 ```bash
 sfdx force:source:deploy -p force-app/main/default/objects/Genesys_GPE_Config__c,force-app/main/default/objects/Genesys_Session_Event__c,force-app/main/default/objects/MessagingSession,force-app/main/default/classes/GenesysGPEController.cls,force-app/main/default/classes/GenesysGPEConfigTriggerHandler.cls,force-app/main/default/classes/GenesysGPEMessagingSessionHandler.cls,force-app/main/default/lwc/genesysGPE,force-app/main/default/lwc/genesysGPEConfig,force-app/main/default/lwc/genesysCustomerJourney,force-app/main/default/triggers/GenesysGPEConfigTrigger.trigger,force-app/main/default/triggers/GenesysGPEMessagingSessionTrigger.trigger,force-app/main/default/flows/GPE_Route_Web_Messaging.flow-meta.xml -u <username>
@@ -73,18 +121,7 @@ sfdx force:source:deploy -p force-app/main/default/objects/Genesys_GPE_Config__c
 
 ## Configuration
 
-1. Configure Named Credentials:
-   - Set up 'GC_Base_API' named credential for Genesys Cloud API access
-   - Configure authentication and endpoint URL
-
-2. Assign Permissions:
-   - Create and assign permission sets for user access
-   - Configure field-level security for custom objects
-
-3. Configure Genesys Cloud:
-   - Set up API credentials
-   - Configure Web Messaging deployment
-   - Set up Predictive Engagement rules
+See configuration guide
 
 ## Component Overview
 
