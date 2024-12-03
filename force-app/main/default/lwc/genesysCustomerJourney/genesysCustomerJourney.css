@@ -1,0 +1,214 @@
+.slds-card_boundary {
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16);
+    transition: all 0.3s ease-in-out;
+    border-radius: 0.25rem;
+}
+
+.slds-card_boundary:hover {
+    box-shadow: 0 5px 15px 0 rgba(0, 0, 0, 0.18);
+    transform: translateY(-2px);
+}
+
+.slds-button_reset.slds-text-link {
+    color: rgb(1, 118, 211);
+    text-decoration: none;
+    transition: all 0.1s ease-in-out;
+    padding: 0;
+}
+
+.slds-button_reset.slds-text-link:hover {
+    color: rgb(0, 95, 178);
+    text-decoration: underline;
+}
+
+.metric-box {
+    background-color: #ffffff;
+    border-radius: 0.25rem;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
+    border: 1px solid #d8dde6;
+}
+
+.metric-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.16);
+}
+
+.chart-box {
+    background-color: #f3f2f2;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+    border: 1px solid #d8dde6;
+}
+
+.chart-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.16);
+}
+
+.chart-container {
+    height: 200px;
+    position: relative;
+}
+
+.donut-chart {
+    width: 100%;
+    height: 100%;
+}
+
+.page-view-chart {
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.page-view-bar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.page-view-bar-label {
+    flex: 0 0 30%;
+    font-size: 0.75rem;
+    padding-right: 0.5rem;
+    color: #706e6b;
+}
+
+.page-view-bar-container {
+    flex: 1;
+    height: 24px;
+    background-color: #f3f2f2;
+    border-radius: 15rem;
+    overflow: hidden;
+    border: 1px solid #d8dde6;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.page-view-bar-fill {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 0.5rem;
+    font-size: 0.75rem;
+    transition: width 0.5s ease-in-out, background-color 0.3s ease-in-out;
+    background-color: #0070d2;
+    position: relative;
+    overflow: hidden;
+}
+
+.page-view-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent);
+    background-size: 28px 28px;
+    animation: move 2s linear infinite;
+    opacity: 0.3;
+}
+
+@keyframes move {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 28px 0;
+    }
+}
+
+.page-view-bar-count {
+    color: #ffffff;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
+}
+
+.slds-card__header .lightning-input {
+    display: flex;
+    align-items: center;
+}
+
+.slds-card__header .lightning-input .slds-form-element__label {
+    margin-right: 0.5rem;
+    font-size: 0.75rem;
+}
+
+.event-card {
+    background: #ffffff;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+    border-left: 4px solid #0070d2;
+    overflow: hidden;
+}
+
+.event-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.16);
+}
+
+.event-card .slds-media__figure {
+    padding: 0.75rem;
+    background-color: #f3f2f2;
+    border-right: 1px solid #d8dde6;
+}
+
+.event-card .slds-media__body {
+    padding: 0.75rem;
+}
+
+.slds-timeline__item_expandable:before {
+    display: none;
+}
+
+@media (max-width: 48em) {
+    .slds-medium-size_1-of-2,
+    .slds-medium-size_1-of-3 {
+        width: 100%;
+    }
+}
+
+.metric-box .slds-text-heading_large {
+    font-size: 1.5rem;
+    color: #0070d2;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.metric-box .slds-text-title {
+    font-size: 0.75rem;
+    color: #706e6b;
+    margin-top: 0.25rem;
+}
+
+.slds-card__header {
+    background: linear-gradient(to bottom, #ffffff, #f3f2f2);
+    border-bottom: 1px solid #d8dde6;
+}
+
+.slds-card__header .lightning-input .slds-checkbox_toggle .slds-checkbox_faux {
+    background-color: #9faab5;
+}
+
+.slds-card__header .lightning-input .slds-checkbox_toggle .slds-checkbox_faux:hover {
+    background-color: #7e8c99;
+}
+
+.slds-card__header .lightning-input .slds-checkbox_toggle [type="checkbox"]:checked + .slds-checkbox_faux {
+    background-color: #0070d2;
+}
+
+.slds-icon {
+    transition: transform 0.3s ease-in-out;
+}
+
+.slds-icon:hover {
+    transform: scale(1.1);
+}
