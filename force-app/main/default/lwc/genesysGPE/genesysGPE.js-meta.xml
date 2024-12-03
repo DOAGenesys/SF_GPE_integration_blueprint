@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>59.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>Genesys Predictive Engagement</masterLabel>
+    <description>Component for integrating Genesys Predictive Engagement with Experience Cloud sites</description>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+        <target>lightningCommunity__Page_Layout</target>
+        <target>lightningCommunity__Theme_Layout</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property 
+                name="gpeConfigName" 
+                type="String" 
+                label="GPE Configuration Name"
+                description="Select the Genesys Predictive Engagement configuration to use"
+                default=""
+                required="true"
+            />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>
