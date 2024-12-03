@@ -50,7 +50,7 @@ Key goals of this integration:
 ## Prerequisites
 
 - Salesforce CLI installed
-- Salesforce organization with Service Cloud and MIAW licenses
+- Salesforce organization with Omni-channel enabled and MIAW licenses
 - Genesys Cloud organization with API access
 
 ## Project Structure
