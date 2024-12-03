@@ -1,0 +1,161 @@
+<template>
+    <div class="slds-card slds-card_boundary slds-m-around_medium">
+        <div class="slds-card__header slds-grid slds-grid_vertical-align-center slds-p-around_medium">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    <lightning-icon icon-name="standard:timeline" alternative-text="Customer Journey" title="Customer Journey" size="medium"></lightning-icon>
+                </div>
+                <div class="slds-media__body">
+                    <h2 class="slds-card__header-title">
+                        <span class="slds-text-heading_medium slds-truncate">Customer Journey Timeline</span>
+                    </h2>
+                </div>
+            </header>
+        </div>
+        <div class="slds-card__body slds-card__body_inner">
+            <div class="slds-grid slds-gutters slds-wrap slds-m-bottom_medium">
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-p-around_xx-small">
+                    <div class="metric-box slds-box slds-box_x-small slds-text-align_center slds-p-around_small">
+                        <div class="slds-text-heading_large">{totalEvents}</div>
+                        <div class="slds-text-title slds-text-color_weak">Total Events</div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-p-around_xx-small">
+                    <div class="metric-box slds-box slds-box_x-small slds-text-align_center slds-p-around_small">
+                        <div class="slds-text-heading_large">{uniquePages}</div>
+                        <div class="slds-text-title slds-text-color_weak">Unique Pages</div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-p-around_xx-small">
+                    <div class="metric-box slds-box slds-box_x-small slds-text-align_center slds-p-around_small">
+                        <div class="slds-text-heading_large">{sessionDuration}</div>
+                        <div class="slds-text-title slds-text-color_weak">Session Duration</div>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-grid slds-gutters slds-wrap slds-m-top_medium">
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-p-around_xx-small">
+                    <div class="chart-box slds-box slds-box_x-small slds-p-around_medium">
+                        <h3 class="slds-text-heading_small slds-m-bottom_small">Event Distribution</h3>
+                        <div class="chart-container">
+                            <svg viewBox="0 0 200 200" class="donut-chart">
+                                <template for:each={chartData} for:item="slice">
+                                    <path key={slice.type} d={slice.path} fill={slice.color}></path>
+                                </template>
+                            </svg>
+                        </div>
+                        <div class="slds-grid slds-gutters slds-wrap slds-m-top_small">
+                            <template for:each={chartData} for:item="slice">
+                                <div key={slice.type} class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-top_x-small">
+                                    <div class="slds-media">
+                                        <div class="slds-media__figure">
+                                            <span class="slds-icon_container" style={slice.style}>
+                                                <svg class="slds-icon slds-icon_xx-small" aria-hidden="true">
+                                                    <use xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#record"></use>
+                                                </svg>
+                                            </span>
+                                        </div>
+                                        <div class="slds-media__body slds-truncate">
+                                            <p class="slds-text-body_small slds-truncate" title={slice.type}>{slice.type}</p>
+                                            <p class="slds-text-body_small slds-text-color_weak">{slice.count} ({slice.percentage}%)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-p-around_xx-small">
+                    <div class="chart-box slds-box slds-box_x-small slds-p-around_medium">
+                        <h3 class="slds-text-heading_small slds-m-bottom_small">Page View Distribution</h3>
+                        <div class="page-view-chart">
+                            <template for:each={pageViewData} for:item="page">
+                                <div key={page.page} class="page-view-bar">
+                                    <div class="page-view-bar-label slds-truncate" title={page.page}>{page.page}</div>
+                                    <div class="page-view-bar-container">
+                                        <div class="page-view-bar-fill" style="width: {page.percentage}%; background-color: {page.color};">
+                                            <span class="page-view-bar-count">{page.count}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-m-top_medium">
+                <article class="slds-card">
+                    <div class="slds-card__header slds-grid slds-p-around_small">
+                        <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                            <div class="slds-media__figure">
+                                <span class="slds-icon_container slds-icon-standard-timeline" title="Event Timeline Details">
+                                    <lightning-icon icon-name="standard:timeline" alternative-text="Event Timeline Details" title="Event Timeline Details"></lightning-icon>
+                                </span>
+                            </div>
+                            <div class="slds-media__body">
+                                <h2 class="slds-card__header-title">
+                                    <span class="slds-text-heading_small">Event Timeline Details</span>
+                                </h2>
+                            </div>
+                        </header>
+                        <div class="slds-col_bump-left">
+                            <lightning-input type="toggle" 
+                                             label="Show Details" 
+                                             name="timelineToggle" 
+                                             onchange={handleTimelineToggle}></lightning-input>
+                        </div>
+                    </div>
+                    <div class="slds-card__body slds-card__body_inner" if:true={showTimelineDetails}>
+                        <ul class="slds-timeline">
+                            <template for:each={formattedEvents} for:item="event">
+                                <template if:true={event.details}>
+                                    <li key={event.Id} class="slds-timeline__item_expandable slds-timeline__item_task">
+                                        <div class="event-card slds-media">
+                                            <div class="slds-media__figure">
+                                                <lightning-icon icon-name={event.iconName} size="small"></lightning-icon>
+                                            </div>
+                                            <div class="slds-media__body">
+                                                <div class="slds-grid slds-grid_align-spread slds-timeline__trigger">
+                                                    <div class="slds-grid slds-grid_vertical-align-center slds-truncate_container_75 slds-no-space">
+                                                        <h3 class="slds-truncate" title={event.Event_Name__c}>
+                                                            <strong>{event.Event_Name__c}</strong>
+                                                        </h3>
+                                                        <p class="slds-timeline__date slds-m-left_small">{event.formattedDate}</p>
+                                                    </div>
+                                                </div>
+                                                <ul class="slds-box slds-theme_shade slds-m-top_x-small slds-m-bottom_x-small slds-p-around_medium">
+                                                    <template for:each={event.details} for:item="detail">
+																												<li key={detail.label} class="slds-item slds-m-bottom_x-small">
+																														<lightning-icon icon-name={detail.icon} size="xx-small" class="slds-m-right_x-small"></lightning-icon>
+																														<strong>{detail.label}:</strong>
+																														<template if:true={detail.recordId}>
+																																<button 
+																																		onclick={handleEventClick} 
+																																		data-record-id={detail.recordId}
+																																		class="slds-button slds-button_reset slds-text-link slds-m-left_xx-small">
+																																		{detail.value}
+																																</button>
+																														</template>
+																														<template if:true={detail.url}>
+																																<a href={detail.url} target="_blank" class="slds-m-left_xx-small">{detail.value}</a>
+																														</template>
+																														<template if:false={detail.url}>
+																																<template if:false={detail.recordId}>
+																																		<span class="slds-m-left_xx-small">{detail.value}</span>
+																																</template>
+																														</template>
+																												</li>
+                                                    </template>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </template>
+                            </template>
+                        </ul>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+</template>
